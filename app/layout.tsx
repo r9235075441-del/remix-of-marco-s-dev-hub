@@ -28,10 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
       serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
     description: "PW-MARCO ~ MANZIL MILEGI YHI SE",
     authors: [
-      { name: "DEVIL ~ BOY", url: "https://github.com/sahilraz" },
-      { name: "SATISH", url: "https://t.me/O0O00000000000000000000000000000" },
+      { name: "PW-MARCO", url: "https://t.me/official_marco_22" },
+      { name: "PW-MARCO Team", url: "https://t.me/official_marco_22" },
     ],
-    creator: "DHOLAKPUR ~ DEV",
+    creator: "PW-MARCO",
 
     icons: {
       icon: serverInfo?.sidebarLogoUrl || "/favicon.ico", // fallback to public/favicon.ico

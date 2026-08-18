@@ -255,7 +255,7 @@ export default function AdminSettings() {
                   id="tg_channel"
                   value={config.tg_channel}
                   onChange={(e) => setConfig({ ...config, tg_channel: e.target.value })}
-                  placeholder="https://t.me/your_channel"
+                  placeholder="https://t.me/official_marco_22"
                   className="mt-1"
                 />
               </div>
