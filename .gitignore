@@ -46,3 +46,7 @@ logs/
 
 # test scripts
 test_prisma.ts
+
+# build mirror
+/dist
+/out

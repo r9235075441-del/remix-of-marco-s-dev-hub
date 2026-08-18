@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "build:dev": "next build",
+    "build:dev": "next build && node scripts/make-dist.cjs",
     "postinstall": "prisma generate",
-    "postbuild": "node scripts/fix-routes-manifest.cjs",
+    "postbuild": "node scripts/fix-routes-manifest.cjs && node scripts/make-dist.cjs",
     "start": "next start -p 4000 -H 0.0.0.0",
     "seed": "tsx seed_admin.ts",
     "bot": "tsx scripts/bot.ts",
