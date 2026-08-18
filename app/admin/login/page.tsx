@@ -39,13 +39,20 @@ export default function AdminLogin() {
         credentials: "include", // ✅ Important: to allow cookie to be set
       });
 
-      const data = await res.json();
+      const raw = await res.text();
+      let data: any = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        data = { message: `Server error (${res.status}). Please try again.` };
+      }
 
       if (res.ok && data.success) {
         toast.success("Login successful! Please wait redirecting to dashboard...");
-        router.push("/admin/dashboard");
+        router.replace("/admin/dashboard");
+        router.refresh();
       } else {
-        const errorMsg = data.message || "Login failed";
+        const errorMsg = data.message || `Login failed (${res.status})`;
         setError(errorMsg);
         toast.error(errorMsg);
       }
