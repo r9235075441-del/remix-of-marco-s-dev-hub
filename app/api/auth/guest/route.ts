@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { getGlobalTokenState } from "@/lib/globalToken";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
 const ACCESS_SECONDS = Number(process.env.JWT_ACCESS_EXPIRES_SECONDS || 3600);
 const REFRESH_DAYS = Number(process.env.JWT_REFRESH_EXPIRES_DAYS || 30);
 

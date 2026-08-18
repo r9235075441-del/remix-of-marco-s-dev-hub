@@ -1,6 +1,7 @@
 import { NextApiRequest } from 'next';
 import jwt from 'jsonwebtoken';
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { JWT_SECRET } from "@/lib/jwtSecret";
+
 
 export function verifyToken(req: NextApiRequest) {
   const token = req.cookies.token;

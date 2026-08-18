@@ -3,6 +3,7 @@ import { jwtVerify } from "jose";
 import Login from "./login"; // Your client login component
 import { redirect } from "next/navigation";
 import { getServerInfoInternal } from "@/lib/serverInfo";
+import { JWT_SECRET_BYTES } from "@/lib/jwtSecret";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function AuthPage() {
 
   if (token) {
     try {
-      const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+      const SECRET = JWT_SECRET_BYTES;
       await jwtVerify(token, SECRET);
 
       // If token valid, redirect to /study

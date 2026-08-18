@@ -2,12 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 import {
+import { JWT_SECRET } from "@/lib/jwtSecret";
   DEFAULT_GLOBAL_TOKEN,
   checkPwToken,
   getGlobalTokenState,
 } from "@/lib/globalToken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
 
 function isAdmin(req: NextApiRequest) {
   const token = req.cookies?.admin_token;

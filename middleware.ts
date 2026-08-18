@@ -2,12 +2,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { JWT_SECRET_BYTES } from "@/lib/jwtSecret";
 
 const REFRESH_API_PATH = "/api/TokenManager/refreshTokens";
 const REFRESH_API_KEY = process.env.REFRESH_API_KEY;
 const PUBLIC_API_PATHS = ["/api/auth"];
 const ADMIN_API_PATHS = ["/api/admin"];
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+const SECRET = JWT_SECRET_BYTES;
 const baseUrl = process.env.BASE_URL;
 const isPublicApi = (pathname: string) =>
   PUBLIC_API_PATHS.some((publicPath) => pathname.startsWith(publicPath));

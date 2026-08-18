@@ -2,8 +2,9 @@
 import { NextApiRequest } from "next";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+
 
 export const verifyUser = async (req: NextApiRequest) => {
   const token = req.cookies?.accessToken;
