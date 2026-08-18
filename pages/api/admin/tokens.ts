@@ -2,11 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 import {
-import { JWT_SECRET } from "@/lib/jwtSecret";
   DEFAULT_GLOBAL_TOKEN,
   checkPwToken,
   getGlobalTokenState,
 } from "@/lib/globalToken";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
 
 
