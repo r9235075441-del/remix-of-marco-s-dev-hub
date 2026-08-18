@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   const state = await getGlobalTokenState();
 
   if (state.loginEnabled || !state.guestLoginEnabled) {
-    const res = NextResponse.redirect(new URL("/auth", req.url));
+    const res = NextResponse.redirect(new URL("/auth?login=1", req.url));
     res.cookies.set("accessToken", "", { path: "/", expires: new Date(0) });
     res.cookies.set("refreshToken", "", { path: "/", expires: new Date(0) });
     res.cookies.set("guest_id", "", { path: "/", expires: new Date(0) });

@@ -102,7 +102,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Guest mode: when login is disabled, /auth simply hands out a guest session
-  if (pathname === "/auth" && !token) {
+  if (pathname === "/auth" && !token && req.nextUrl.searchParams.get("login") !== "1") {
     const url = req.nextUrl.clone();
     url.pathname = "/api/auth/guest";
     url.search = "";
