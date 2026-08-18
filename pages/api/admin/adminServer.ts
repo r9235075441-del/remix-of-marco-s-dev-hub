@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           id: 1,
           webName: update.webName || "PW-MARCO",
           registrationOpen: update.registrationOpen ?? true,
-          sidebarLogoUrl: update.sidebarLogoUrl || "",
+          sidebarLogoUrl: update.sidebarLogoUrl || "https://i.ibb.co/YBbwNGxz/Logo-pw-removebg-preview.png",
           sidebarTitle: update.sidebarTitle || "PW-MARCO",
           isDirectLoginOpen: update.isDirectLoginOpen ?? true,
           password: update.password || "",
