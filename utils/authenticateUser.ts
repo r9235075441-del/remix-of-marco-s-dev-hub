@@ -38,11 +38,27 @@ export async function authenticateUser(
   }
 
   try {
-    const decoded = jwt.verify(accessToken, JWT_SECRET) as JwtPayload;
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    const decoded = jwt.verify(accessToken, JWT_SECRET) as JwtPayload & {
+      guest?: boolean;
+    };
+
+    let user: any = null;
+    try {
+      user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    } catch (dbErr) {
+      console.error("[auth] DB lookup failed:", dbErr);
+    }
+
+    // Guest sessions can run without a database row: they always ride the
+    // global PW token anyway.
+    if (!user && decoded.guest) {
+      return await buildVirtualGuest(decoded);
+    }
+
     if (!user) throw new Error("User not found");
     await assertGuestSessionValid(user, res);
     return user;
+
   } catch (err: any) {
     if (err.name !== "TokenExpiredError") {
       clearAuthCookies(res);
