@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminLayout from "@/app/components/AdminLayout";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 type TokenState = {
   loginEnabled: boolean;

@@ -12,7 +12,8 @@ import {
   ChevronDown,
   Menu,
   X,
-  Link
+  Link,
+  KeyRound
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -66,6 +67,8 @@ export default function AdminLayout({ children, activePage = "dashboard" }: Admi
       router.push("/admin/users");
     } else if (page === "batches") {
       router.push("/admin/batches");
+    } else if (page === "tokens") {
+      router.push("/admin/tokens");
     }
     // Add navigation logic for other pages when implemented
   };
@@ -119,6 +122,12 @@ export default function AdminLayout({ children, activePage = "dashboard" }: Admi
             label="Batches" 
             active={activePage === "batches"}
             onClick={() => handleNavClick("batches")}
+          />
+          <NavItem 
+            icon={<KeyRound className="w-5 h-5" />} 
+            label="Tokens" 
+            active={activePage === "tokens"}
+            onClick={() => handleNavClick("tokens")}
           />
           <NavItem 
             icon={<Settings className="w-5 h-5" />} 
