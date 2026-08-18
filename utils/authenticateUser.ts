@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { getGlobalTokenState } from "@/lib/globalToken";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+
 const JWT_ACCESS_EXPIRES_SECONDS = Number(
   process.env.JWT_ACCESS_EXPIRES_SECONDS
 );
@@ -37,11 +38,27 @@ export async function authenticateUser(
   }
 
   try {
-    const decoded = jwt.verify(accessToken, JWT_SECRET) as JwtPayload;
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    const decoded = jwt.verify(accessToken, JWT_SECRET) as JwtPayload & {
+      guest?: boolean;
+    };
+
+    let user: any = null;
+    try {
+      user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    } catch (dbErr) {
+      console.error("[auth] DB lookup failed:", dbErr);
+    }
+
+    // Guest sessions can run without a database row: they always ride the
+    // global PW token anyway.
+    if (!user && decoded.guest) {
+      return await buildVirtualGuest(decoded);
+    }
+
     if (!user) throw new Error("User not found");
     await assertGuestSessionValid(user, res);
     return user;
+
   } catch (err: any) {
     if (err.name !== "TokenExpiredError") {
       clearAuthCookies(res);
@@ -103,14 +120,18 @@ async function assertGuestSessionValid(user: any, res: NextApiResponse) {
     throw new Error("Guest session revoked. Please login.");
   }
   if (state.globalAccessToken && user.ActualToken !== state.globalAccessToken) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        ActualToken: state.globalAccessToken,
-        ActualRefresh: state.globalRefreshToken,
-        randomId: state.globalRandomId,
-      } as any,
-    });
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          ActualToken: state.globalAccessToken,
+          ActualRefresh: state.globalRefreshToken,
+          randomId: state.globalRandomId,
+        } as any,
+      });
+    } catch (dbErr) {
+      console.error("[auth] Could not persist refreshed global token:", dbErr);
+    }
     user.ActualToken = state.globalAccessToken;
     user.ActualRefresh = state.globalRefreshToken;
     user.randomId = state.globalRandomId;
@@ -124,3 +145,24 @@ function clearAuthCookies(res: NextApiResponse) {
   ]);
 }
 export { clearAuthCookies };
+
+/**
+ * Builds an in-memory guest user (no database row) that rides the global PW
+ * token. Used when Postgres is unreachable so the app keeps serving content.
+ */
+async function buildVirtualGuest(decoded: any) {
+  const state = await getGlobalTokenState();
+  return {
+    id: decoded.userId,
+    UserName: decoded.name || state.globalTokenName || "Guest User",
+    phoneNumber: decoded.userId,
+    tag: "guest",
+    isGuest: true,
+    telegramId: decoded.telegramId ?? null,
+    photoUrl: decoded.PhotoUrl ?? null,
+    ActualToken: state.globalAccessToken,
+    ActualRefresh: state.globalRefreshToken,
+    randomId: state.globalRandomId,
+    guestEpoch: state.guestSessionEpoch,
+  } as any;
+}

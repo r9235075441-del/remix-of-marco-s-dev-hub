@@ -3,11 +3,12 @@ import prisma from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
 const TELEGRAM_BOT_TOKEN = process.env.BOT_TOKEN!;
 const TELEGRAM_CHANNEL_ID = process.env.LOG_CHANNEL_ID!;
 const BASE_URL = process.env.PW_API;
-const JWT_SECRET = process.env.JWT_SECRET!;
+
 const JWT_ACCESS_EXPIRES_SECONDS = Number(process.env.JWT_ACCESS_EXPIRES_SECONDS || 3600);
 const JWT_REFRESH_EXPIRES_DAYS = Number(process.env.JWT_REFRESH_EXPIRES_DAYS || 15);
 

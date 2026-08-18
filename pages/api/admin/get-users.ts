@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import { getHeaders } from "@/utils/auth";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") return handleGetUsers(req, res);
@@ -15,7 +16,7 @@ async function handleGetUsers(req: NextApiRequest, res: NextApiResponse) {
     const token = req.cookies?.admin_token;
     if (!token) return res.status(401).json({ message: "No token provided" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "changeme");
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (!decoded || typeof decoded !== "object" || !(decoded as any).admin) {
       return res.status(401).json({ message: "Invalid token" });
     }
@@ -123,7 +124,7 @@ async function handleCheckTokenStatus(req: NextApiRequest, res: NextApiResponse)
     const token = req.cookies?.admin_token;
     if (!token) return res.status(401).json({ message: "No token provided" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "changeme");
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (!decoded || typeof decoded !== "object" || !(decoded as any).admin) {
       return res.status(401).json({ message: "Invalid token" });
     }

@@ -6,8 +6,9 @@ import {
   checkPwToken,
   getGlobalTokenState,
 } from "@/lib/globalToken";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
 
 function isAdmin(req: NextApiRequest) {
   const token = req.cookies?.admin_token;

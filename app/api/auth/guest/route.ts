@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { getGlobalTokenState } from "@/lib/globalToken";
+import { JWT_SECRET } from "@/lib/jwtSecret";
 
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
 const ACCESS_SECONDS = Number(process.env.JWT_ACCESS_EXPIRES_SECONDS || 3600);
 const REFRESH_DAYS = Number(process.env.JWT_REFRESH_EXPIRES_DAYS || 30);
 
@@ -39,51 +40,70 @@ export async function GET(req: NextRequest) {
   const phoneNumber = `guest_${deviceId}`;
   const userAgent = req.headers.get("user-agent") || "";
 
-  const guest = await prisma.user.upsert({
-    where: { phoneNumber },
-    update: {
-      ActualToken: state.globalAccessToken,
-      ActualRefresh: state.globalRefreshToken,
-      randomId: state.globalRandomId,
-      guestEpoch: state.guestSessionEpoch,
-      isGuest: true,
-      lastSeenAt: new Date(),
-      userAgent,
-    } as any,
-    create: {
-      UserName: state.globalTokenName || "Guest User",
-      phoneNumber,
-      tag: "guest",
-      isGuest: true,
-      deviceId,
-      userAgent,
-      guestEpoch: state.guestSessionEpoch,
-      hasLoggedIn: true,
-      lastSeenAt: new Date(),
-      ActualToken: state.globalAccessToken,
-      ActualRefresh: state.globalRefreshToken,
-      randomId: state.globalRandomId,
-    } as any,
-  });
-
   const refreshToken = crypto.randomBytes(32).toString("hex");
+
+  // Guest identity falls back to a DB-less session when Postgres is
+  // unreachable, so the site keeps working on the global PW token.
+  let guestId = `guest_${deviceId}`;
+  let guestName = state.globalTokenName || "Guest User";
+  let telegramId: string | null = null;
+  let photoUrl: string | null = null;
+
+  try {
+    const guest = await prisma.user.upsert({
+      where: { phoneNumber },
+      update: {
+        ActualToken: state.globalAccessToken,
+        ActualRefresh: state.globalRefreshToken,
+        randomId: state.globalRandomId,
+        guestEpoch: state.guestSessionEpoch,
+        isGuest: true,
+        lastSeenAt: new Date(),
+        userAgent,
+      } as any,
+      create: {
+        UserName: state.globalTokenName || "Guest User",
+        phoneNumber,
+        tag: "guest",
+        isGuest: true,
+        deviceId,
+        userAgent,
+        guestEpoch: state.guestSessionEpoch,
+        hasLoggedIn: true,
+        lastSeenAt: new Date(),
+        ActualToken: state.globalAccessToken,
+        ActualRefresh: state.globalRefreshToken,
+        randomId: state.globalRandomId,
+      } as any,
+    });
+
+    guestId = guest.id;
+    guestName = guest.UserName;
+    telegramId = guest.telegramId;
+    photoUrl = guest.photoUrl;
+
+    await prisma.user.update({
+      where: { id: guest.id },
+      data: { refreshToken },
+    });
+  } catch (dbErr) {
+    console.error("[guest] Database unavailable, issuing DB-less guest session:", dbErr);
+  }
+
   const accessToken = jwt.sign(
     {
-      userId: guest.id,
-      name: guest.UserName,
-      telegramId: guest.telegramId,
-      PhotoUrl: guest.photoUrl,
+      userId: guestId,
+      name: guestName,
+      telegramId,
+      PhotoUrl: photoUrl,
       guest: true,
+      deviceId,
       epoch: state.guestSessionEpoch,
     },
     JWT_SECRET,
     { expiresIn: `${ACCESS_SECONDS}s` }
   );
 
-  await prisma.user.update({
-    where: { id: guest.id },
-    data: { refreshToken },
-  });
 
   const res = NextResponse.redirect(new URL(next, req.url));
   const secure = process.env.NODE_ENV === "production";

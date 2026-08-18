@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { JWT_SECRET_BYTES } from "@/lib/jwtSecret";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("accessToken")?.value;
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const secret = JWT_SECRET_BYTES;
     await jwtVerify(token, secret);
     return NextResponse.json({ authenticated: true });
   } catch {
