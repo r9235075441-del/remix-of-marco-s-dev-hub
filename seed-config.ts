@@ -30,16 +30,16 @@ async function seed() {
       console.log("Creating default server config...");
       const defaultConfig = {
         _id: 1,
-        webName: "PW-MARCO",
+        webName: process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
         registrationOpen: true,
         sidebarLogoUrl: "/logo.png",
-        sidebarTitle: "PW-MARCO",
+        sidebarTitle: process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
         isDirectLoginOpen: true,
-        password: "Kakade tv5@",
+        password: process.env.ADMIN_PASSWORD || "change-me",
         tg_bot: "your_bot_username",
         tg_channel: "your_channel",
         tg_username: "your_username",
-        username: "Varad_K@123",
+        username: process.env.ADMIN_USERNAME || "admin",
         shortner_servers: []
       };
       await ServerConfig.create(defaultConfig);
