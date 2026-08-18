@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Batch {
+  id             String          @id @default(uuid())
+  batchId        String          @unique
+  batchName      String
+  batchPrice     Float
+  batchImage     String?
+  template       String          @default("NORMAL")
+  BatchType      BatchType       @default(FREE)
+  language       String
+  byName         String
+  startDate      String
+  endDate        String
+  batchStatus    Boolean         @default(true)
+  enrolledTokens EnrolledToken[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum BatchType {
+  FREE
+  PAID
+}
+
+model EnrolledToken {
+  id           String   @id @default(uuid())
+  batchId      String
+  batch        Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  ownerId      String
+  user         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  accessToken  String
+  refreshToken String
+  tokenStatus  Boolean  @default(true)
+  randomId     String?
+  updatedAt    DateTime @default(now())
+}
+
+model Promotion {
+  id      String  @id @default(uuid())
+  title   String?
+  message String?
+}
+
+model ServerConfig {
+  id                Int              @id @default(1)
+  webName           String
+  registrationOpen  Boolean
+  sidebarLogoUrl    String
+  sidebarTitle      String
+  isDirectLoginOpen Boolean?
+  password          String
+  tg_bot            String
+  tg_channel        String
+  tg_username       String
+  username          String
+  shortner_servers  ShortnerServer[]
+  updatedAt         DateTime         @updatedAt
+}
+
+model ShortnerServer {
+  id             String       @id @default(uuid())
+  serverConfigId Int
+  serverConfig   ServerConfig @relation(fields: [serverConfigId], references: [id], onDelete: Cascade)
+  name           String
+  enabled        Boolean
+  api_url        String
+  api_key        String
+}
+
+model TgBot {
+  id            String    @id @default(uuid())
+  ownerId       String?
+  log_channel_Id String?
+  webUrl        String?
+  ownerUsername String?
+  channels      Channel[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Channel {
+  id          String  @id @default(uuid())
+  tgBotId     String
+  tgBot       TgBot   @relation(fields: [tgBotId], references: [id], onDelete: Cascade)
+  channelLink String?
+  channelName String?
+  channelType String?
+}
+
+model User {
+  id              String              @id @default(uuid())
+  UserName        String
+  phoneNumber     String              @unique
+  telegramId      String?
+  photoUrl        String?
+  tag             String?
+  tagExpiry       DateTime?
+  hasLoggedIn     Boolean             @default(false)
+  refreshToken    String?
+  ActualToken     String?
+  ActualRefresh   String?
+  randomId        String?
+  enrolledBatches UserEnrolledBatch[]
+  enrolledTokens  EnrolledToken[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model UserEnrolledBatch {
+  id      String @id @default(uuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batchId String
+  name    String
+}
+
+model Verification {
+  id             String          @id @default(uuid())
+  anon_id        String          @unique
+  iphash         String?
+  useragent      String?
+  verified       Boolean         @default(false)
+  timestamp      DateTime        @default(now())
+  expireAt       DateTime
+  verifiedBatch  VerifiedBatch[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model VerifiedBatch {
+  id                String       @id @default(uuid())
+  verificationId    String
+  verification      Verification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+  batchId           String?
+  expireAt          DateTime?
+  verifiedAt        DateTime?
+  verificationToken String?
+}
