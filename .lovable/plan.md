@@ -34,12 +34,45 @@ Note: Lovable ka live preview Next.js app ke liye kaam nahi karega (preview sirf
   (`app/layout.tsx` author link, `app/contact/page.tsx`, `app/check/page.tsx`, `app/auth/login.tsx`, admin settings placeholders).
 - Default channel/username/bot values (`lib/serverInfo.ts`, `seed_admin.ts`, `.env.example` ke `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`) bhi `official_marco_22` par set.
 
-## 6. Deploy documentation
+## 6. Global Token + Guest Login System (naya feature)
 
-`README.md` me: env vars list (`MONGODB_URI`, `DATABASE_URL`, `NEXT_PUBLIC_APP_NAME=PW-MARCO`, `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`, JWT/secret keys), local run steps, admin seed command, aur Vercel deploy steps (import repo → env vars paste → deploy).
+Ek "Global Token" system add hoga jo admin panel se control hoga.
+
+**Data model (Prisma `ServerConfig` + Mongo `ServerConfig` dono me nayi fields):**
+- `globalAccessToken`, `globalRefreshToken`, `globalTokenId`, `globalTokenName`, `globalTokenUpdatedAt`
+- `loginEnabled` (abhi `false` — login band), `guestSessionEpoch` (revoke counter)
+
+Default values seed me: token id `6a717a7a7daa01670de8120f`, name `Guest User`, aapka diya hua accessToken + refreshToken (`f69f7ae6...`).
+
+**Guest sessions:**
+- Login off hone par har visitor ko automatic guest session milega: middleware har device ke liye alag `guest_id` cookie + signed `guest_session` cookie set karega (device-wise alag cookie), aur content ke liye global access/refresh token server-side inject hoga.
+- Guest session record DB me store hoga: guest id, device/user-agent, IP, created/last-seen, session epoch, aur kaunsa token inject hua.
+- Har guest session cookie me `epoch` hoga. Jab admin login enable karega (ya "Revoke all guests" dabaega), `guestSessionEpoch` badh jayega → purani sab guest cookies invalid → middleware un users ko `/auth` par redirect kar dega.
+
+**Admin panel me naya page `/admin/tokens`:**
+- Global access token + refresh token edit/save karne ka form (masked view + copy button).
+- "Login Enable/Disable" toggle (abhi default: disabled = guest mode on).
+- "Revoke all guest sessions" button.
+- Table: saare logged-in users aur guest sessions ke tokens (name/phone ya guest id, device, last seen, token preview + full copy).
+- Har row par "Check Token" button: server-side API token ko validate karega (JWT expiry decode + upstream API ping) aur Valid / Expired / Invalid status dikhayega. Global token ke liye bhi same check button.
+
+**Backend routes (server-side, admin-protected):**
+- `GET/POST /api/admin/global-token` — read/update global tokens + loginEnabled
+- `POST /api/admin/revoke-guests`
+- `GET /api/admin/sessions` — users + guest sessions list
+- `POST /api/admin/verify-token` — single token validity check
+- Guest issue/validate logic `middleware.ts` + `lib/guestSession.ts` me.
+
+Existing `/auth`, OTP aur user token flow ko todha nahi jayega — jab admin login enable karega, normal login wapas chalu ho jayega.
+
+## 7. Deploy documentation
+
+`README.md` me: env vars list (`MONGODB_URI`, `DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_APP_NAME=PW-MARCO`, `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`), local run steps, admin seed command, aur Vercel deploy steps (import repo → env vars paste → deploy).
 
 ## Technical notes
 
 - `bot-temp/node_modules` aur koi bhi vendored dependency commit nahi hogi; sirf `bot-temp/bot.js` jaisi source files.
-- Secrets code me hardcode nahi honge — env vars ke through; Mongo URI aur admin password Lovable secrets/`.env.local` me store honge.
+- Secrets code me hardcode nahi honge — env vars ke through; Mongo URI aur admin password Lovable secrets/`.env.local` me store honge. Global PW token DB me rahega (admin editable), seed me default set.
+- Guest session cookie HMAC-signed (`JWT_SECRET`) hogi taaki client tamper na kar sake; global tokens kabhi client JS me expose nahi honge — sirf server-side proxy/inject.
 - Build check: `next build` locally run karke type/import errors fix kiye jayenge.
+
