@@ -30,10 +30,10 @@ async function seed() {
       console.log("Creating default server config...");
       const defaultConfig = {
         _id: 1,
-        webName: "VDK Study",
+        webName: "PW-MARCO",
         registrationOpen: true,
         sidebarLogoUrl: "/logo.png",
-        sidebarTitle: "VDK Study",
+        sidebarTitle: "PW-MARCO",
         isDirectLoginOpen: true,
         password: "Kakade tv5@",
         tg_bot: "your_bot_username",

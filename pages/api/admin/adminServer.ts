@@ -56,10 +56,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         update: update,
         create: {
           id: 1,
-          webName: update.webName || "VDK Study",
+          webName: update.webName || "PW-MARCO",
           registrationOpen: update.registrationOpen ?? true,
           sidebarLogoUrl: update.sidebarLogoUrl || "",
-          sidebarTitle: update.sidebarTitle || "VDK Study",
+          sidebarTitle: update.sidebarTitle || "PW-MARCO",
           isDirectLoginOpen: update.isDirectLoginOpen ?? true,
           password: update.password || "",
           tg_bot: update.tg_bot || "",

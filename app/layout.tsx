@@ -25,8 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title:
-      serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "VDK Study",
-    description: "VDK Study ~ MANZIL MILEGI YHI SE",
+      serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
+    description: "PW-MARCO ~ MANZIL MILEGI YHI SE",
     authors: [
       { name: "DEVIL ~ BOY", url: "https://github.com/sahilraz" },
       { name: "SATISH", url: "https://t.me/O0O00000000000000000000000000000" },

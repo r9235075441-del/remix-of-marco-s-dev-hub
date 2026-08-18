@@ -29,7 +29,7 @@ export default function HomePageClient({ serverInfo: initialServerInfo }: { serv
   }, [initialServerInfo]);
 
   // Use sidebarTitle as webName if available, else fallback
-  const appName = serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "VDK Study";
+  const appName = serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO";
   const phrases = [
     { text: `Welcome to ${appName}`, color: "!text-cyan-300" },
     { text: "Your Study Companion", color: "!text-violet-400" },

@@ -294,7 +294,7 @@ export default function Login({ serverInfo: initialServerInfo }: { serverInfo?: 
         </div>
         <p className="text-xs text-center text-gray-500">
           Made with ❤️ by{" "}
-          <span className="font-semibold text-purple-400">{serverInfo?.webName || "VDK Study"}</span>
+          <span className="font-semibold text-purple-400">{serverInfo?.webName || "PW-MARCO"}</span>
         </p>
 
         {/* Bot Authorization Info */}

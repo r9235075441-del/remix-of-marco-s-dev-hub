@@ -1,13 +1,13 @@
 import prisma from "@/lib/prisma";
 
 export const DEFAULT_SERVER_INFO = {
-  webName: process.env.NEXT_PUBLIC_APP_NAME || "VDK Study",
+  webName: process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
   sidebarLogoUrl: "/logo.png",
-  sidebarTitle: "VDK Study",
-  tg_channel: "VdkStudy",
-  tg_username: "VdkStudy",
+  sidebarTitle: "PW-MARCO",
+  tg_channel: "official_marco_22",
+  tg_username: "official_marco_22",
   isDirectLoginOpen: true,
-  tg_bot: "PWRAUTHBOT",
+  tg_bot: "official_marco_22",
   shortner_servers: []
 };
 

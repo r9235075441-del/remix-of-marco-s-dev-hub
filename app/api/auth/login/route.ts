@@ -51,10 +51,10 @@ export async function POST(req: NextRequest) {
       config = await prisma.serverConfig.create({
         data: {
           id: 1,
-          webName: "VDK Study",
+          webName: "PW-MARCO",
           registrationOpen: true,
           sidebarLogoUrl: "https://example.com/logo.png",
-          sidebarTitle: "VDK Study",
+          sidebarTitle: "PW-MARCO",
           isDirectLoginOpen: true,
           password: "admin",
           tg_bot: "",

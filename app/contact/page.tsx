@@ -25,7 +25,7 @@ export default function ContactPage() {
     fetchServerInfo();
   }, []);
 
-  const appName = serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "VDK Study";
+  const appName = serverInfo?.webName || process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO";
   const tg_channel = serverInfo?.tg_channel;
   const tg_username = serverInfo?.tg_username;
   const sidebarLogoUrl = serverInfo?.sidebarLogoUrl;
