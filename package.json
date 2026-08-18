@@ -9,6 +9,7 @@
     "postinstall": "prisma generate",
     "postbuild": "node scripts/fix-routes-manifest.cjs",
     "start": "next start -p 4000 -H 0.0.0.0",
+    "seed": "tsx seed_admin.ts",
     "bot": "tsx scripts/bot.ts",
     "lint": "next lint",
     "both": "concurrently \"npm run dev\" \"npm run bot\""

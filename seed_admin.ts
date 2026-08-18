@@ -9,8 +9,12 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const username = 'VaradK_23@';
-  const plainPassword = 'Kakade tv5@';
+  const username = process.env.ADMIN_USERNAME;
+  const plainPassword = process.env.ADMIN_PASSWORD;
+
+  if (!username || !plainPassword) {
+    throw new Error('ADMIN_USERNAME and ADMIN_PASSWORD must be set in your environment (.env)');
+  }
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(plainPassword, salt);
