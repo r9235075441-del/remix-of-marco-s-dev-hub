@@ -101,6 +101,16 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Guest mode: when login is disabled, /auth simply hands out a guest session
+  if (pathname === "/auth" && !token) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/api/auth/guest";
+    url.search = "";
+    url.searchParams.set("next", "/study");
+    url.searchParams.set("from", "auth");
+    return NextResponse.redirect(url);
+  }
+
   // NEW: If user is logged in and tries to access /auth, redirect to /study
   if (pathname === "/auth" && token) {
     try {
@@ -184,7 +194,7 @@ export async function middleware(req: NextRequest) {
 
   if (isProtectedApi || isStudyPage || isWatchPage) {
     if (!token) {
-      return redirectWithCookieClear(req);
+      return isApi ? redirectWithCookieClear(req) : toGuestGateway(req);
     }
 
     try {
@@ -223,11 +233,25 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next();
     } catch (err: any) {
       console.warn("JWT invalid or expired:", err);
-      return redirectWithCookieClear(req);
+      return isApi ? redirectWithCookieClear(req) : toGuestGateway(req);
     }
   }
 
   return NextResponse.next();
+}
+
+// Sends the visitor through the guest gateway, which either issues a guest
+// session (login disabled) or forwards to /auth (login enabled).
+function toGuestGateway(req: NextRequest) {
+  const url = req.nextUrl.clone();
+  const next = req.nextUrl.pathname + req.nextUrl.search;
+  url.pathname = "/api/auth/guest";
+  url.search = "";
+  url.searchParams.set("next", next);
+  const res = NextResponse.redirect(url);
+  res.cookies.set("accessToken", "", { path: "/", expires: new Date(0) });
+  res.cookies.set("refreshToken", "", { path: "/", expires: new Date(0) });
+  return res;
 }
 
 function redirectWithCookieClear(req: NextRequest) {
