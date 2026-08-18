@@ -120,14 +120,18 @@ async function assertGuestSessionValid(user: any, res: NextApiResponse) {
     throw new Error("Guest session revoked. Please login.");
   }
   if (state.globalAccessToken && user.ActualToken !== state.globalAccessToken) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        ActualToken: state.globalAccessToken,
-        ActualRefresh: state.globalRefreshToken,
-        randomId: state.globalRandomId,
-      } as any,
-    });
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          ActualToken: state.globalAccessToken,
+          ActualRefresh: state.globalRefreshToken,
+          randomId: state.globalRandomId,
+        } as any,
+      });
+    } catch (dbErr) {
+      console.error("[auth] Could not persist refreshed global token:", dbErr);
+    }
     user.ActualToken = state.globalAccessToken;
     user.ActualRefresh = state.globalRefreshToken;
     user.randomId = state.globalRandomId;
