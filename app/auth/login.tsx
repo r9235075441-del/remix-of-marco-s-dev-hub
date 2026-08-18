@@ -331,7 +331,7 @@ export default function Login({ serverInfo: initialServerInfo }: { serverInfo?: 
                 <div className="flex items-center gap-4">
                   <span className="text-xs text-blue-300">Bot Username:</span>
                   <a
-                    href={`https://telegram.me/${botUsername?.replace(
+                    href={`https://t.me/${(botUsername || "official_marco_22").replace(
                       "@",
                       ""
                     )}`}

@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 export const DEFAULT_SERVER_INFO = {
   webName: process.env.NEXT_PUBLIC_APP_NAME || "PW-MARCO",
-  sidebarLogoUrl: "/logo.png",
+  sidebarLogoUrl: "https://i.ibb.co/YBbwNGxz/Logo-pw-removebg-preview.png",
   sidebarTitle: "PW-MARCO",
   tg_channel: "official_marco_22",
   tg_username: "official_marco_22",

@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
           id: 1,
           webName: "PW-MARCO",
           registrationOpen: true,
-          sidebarLogoUrl: "https://example.com/logo.png",
+          sidebarLogoUrl: "https://i.ibb.co/YBbwNGxz/Logo-pw-removebg-preview.png",
           sidebarTitle: "PW-MARCO",
           isDirectLoginOpen: true,
           password: "admin",

@@ -60,7 +60,7 @@ export function Sidebar({
         <div className="p-4 border-b sticky top-0 bg-background z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full dark:bg-foreground overflow-hidden">
             <Image
-              src={sidebarLogoUrl || "/assets/img/logo.png"}
+              src={sidebarLogoUrl || "https://i.ibb.co/YBbwNGxz/Logo-pw-removebg-preview.png"}
               alt={sidebarTitle || "SATISH ~ DEV"}
               width={40}
               height={40}
