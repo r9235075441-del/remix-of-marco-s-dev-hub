@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:dev": "next build",
     "postinstall": "prisma generate",
     "postbuild": "node scripts/fix-routes-manifest.cjs",
     "start": "next start -p 4000 -H 0.0.0.0",
