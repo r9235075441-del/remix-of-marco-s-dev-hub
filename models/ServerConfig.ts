@@ -21,6 +21,14 @@ export interface IServerConfig extends mongoose.Document<number> {
   tg_channel: string;
   tg_username: string;
   username: string;
+  loginEnabled: boolean;
+  guestLoginEnabled: boolean;
+  globalTokenId?: string;
+  globalTokenName?: string;
+  globalAccessToken?: string;
+  globalRefreshToken?: string;
+  globalRandomId?: string;
+  guestSessionEpoch: number;
   shortner_servers: IShortnerServer[];
   updatedAt: Date;
 }
@@ -38,6 +46,14 @@ const serverConfigSchema = new mongoose.Schema<IServerConfig>(
     tg_channel: { type: String, required: true },
     tg_username: { type: String, required: true },
     username: { type: String, required: true },
+    loginEnabled: { type: Boolean, required: false, default: false },
+    guestLoginEnabled: { type: Boolean, required: false, default: true },
+    globalTokenId: { type: String, required: false },
+    globalTokenName: { type: String, required: false },
+    globalAccessToken: { type: String, required: false },
+    globalRefreshToken: { type: String, required: false },
+    globalRandomId: { type: String, required: false },
+    guestSessionEpoch: { type: Number, required: false, default: 1 },
     shortner_servers: {
       type: [
         {

@@ -60,6 +60,14 @@ model ServerConfig {
   tg_channel        String
   tg_username       String
   username          String
+  loginEnabled       Boolean  @default(false)
+  guestLoginEnabled  Boolean  @default(true)
+  globalTokenId      String?
+  globalTokenName    String?
+  globalAccessToken  String?
+  globalRefreshToken String?
+  globalRandomId     String?
+  guestSessionEpoch  Int      @default(1)
   shortner_servers  ShortnerServer[]
   updatedAt         DateTime         @updatedAt
 }
@@ -107,6 +115,11 @@ model User {
   ActualToken     String?
   ActualRefresh   String?
   randomId        String?
+  isGuest         Boolean             @default(false)
+  guestEpoch      Int                 @default(0)
+  deviceId        String?
+  userAgent       String?
+  lastSeenAt      DateTime?
   enrolledBatches UserEnrolledBatch[]
   enrolledTokens  EnrolledToken[]
   createdAt       DateTime            @default(now())
