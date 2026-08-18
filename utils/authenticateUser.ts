@@ -141,3 +141,24 @@ function clearAuthCookies(res: NextApiResponse) {
   ]);
 }
 export { clearAuthCookies };
+
+/**
+ * Builds an in-memory guest user (no database row) that rides the global PW
+ * token. Used when Postgres is unreachable so the app keeps serving content.
+ */
+async function buildVirtualGuest(decoded: any) {
+  const state = await getGlobalTokenState();
+  return {
+    id: decoded.userId,
+    UserName: decoded.name || state.globalTokenName || "Guest User",
+    phoneNumber: decoded.userId,
+    tag: "guest",
+    isGuest: true,
+    telegramId: decoded.telegramId ?? null,
+    photoUrl: decoded.PhotoUrl ?? null,
+    ActualToken: state.globalAccessToken,
+    ActualRefresh: state.globalRefreshToken,
+    randomId: state.globalRandomId,
+    guestEpoch: state.guestSessionEpoch,
+  } as any;
+}
